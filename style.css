@@ -1,0 +1,114 @@
+body {
+    font-family: Arial, sans-serif;
+    background-image: url("imagenes/descarga.jpeg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.contenedor {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.contenedor .linea1{
+    width: 2px; 
+    height: 160px; 
+    background-color: rgb(255, 255, 255); 
+    transform: rotate(-45deg); 
+    transform-origin: 0 0; 
+    position: absolute;
+    top: 80%;
+    left: 90%;
+  }
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #000000;
+    color: white;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #9f9f9f;
+    color: black;
+}
+
+#arbol {
+    margin-top: 20px;
+}
+.flechas-container {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 3; /* Asegura que las flechas estén por encima de los nodos */
+}
+
+.nodo-operador {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    display: inline-block;
+    text-align: center;
+    border: 2px solid #000;
+    position: relative;
+    z-index: 1;
+}
+
+.contenedor-nodos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.nodo {
+    display: inline-block;
+    text-align: center;
+    margin: 0 20px;
+    position: relative;
+    z-index: 1; 
+}
+
+.nodo-expresion {
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: 2px solid #000;
+}
+
+
+svg {
+    width: 100px;
+    height: 100px;
+}
