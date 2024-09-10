@@ -1,115 +1,94 @@
-// Función para analizar la expresión y dividirla en un árbol binario
-function parseExpression(expression) {
-    let operators = ['+', '-', '*', '/'];
-    let stack = [];
-    let lastOpIndex = -1;
-    let lastOp = '';
-
-    // Encontrar el operador de más bajo nivel fuera de los paréntesis
-    for (let i = 0; i < expression.length; i++) {
-        let char = expression[i];
-        if (char === '(') {
-            stack.push(i);
-        } else if (char === ')') {
-            stack.pop();
-        } else if (operators.includes(char) && stack.length === 0) {
-            lastOpIndex = i;
-            lastOp = char;
+// Función para analizar una expresión matemática y construir su estructura
+function analizarExpresion(expresion) {
+    let operadores = ['+', '-', '*', '/'];  // Operadores permitidos
+    let pila = [];  // Pila para manejar paréntesis
+    let indiceUltimoOperador = -1;  // Índice del último operador fuera de paréntesis
+    let ultimoOperador = '';  // Último operador encontrado
+    
+    // Buscar el operador de más bajo nivel fuera de los paréntesis
+    for (let i = 0; i < expresion.length; i++) {
+        let caracter = expresion[i];
+        if (caracter === '(') {
+            pila.push(i);  // Añadir el índice de apertura de paréntesis a la pila
+        } else if (caracter === ')') {
+            pila.pop();  // Quitar el índice de cierre de paréntesis
+        } else if (operadores.includes(caracter) && pila.length === 0) {
+            indiceUltimoOperador = i;  // Guardar el índice del operador
+            ultimoOperador = caracter;  // Guardar el operador
         }
     }
 
-    // Si no se encuentra operador fuera de paréntesis, tratar el contenido dentro de los paréntesis
-    if (lastOpIndex === -1 && expression[0] === '(' && expression[expression.length - 1] === ')') {
-        return parseExpression(expression.slice(1, -1).trim());
+    // Si no se encuentra un operador fuera de paréntesis, analizar el contenido dentro de ellos
+    if (indiceUltimoOperador === -1 && expresion[0] === '(' && expresion[expresion.length - 1] === ')') {
+        return analizarExpresion(expresion.slice(1, -1).trim());  // Recursividad para eliminar paréntesis exteriores
     }
 
     // Procesar los operadores internos
-    if (lastOpIndex !== -1) {
-        let left = expression.slice(0, lastOpIndex).trim();
-        let right = expression.slice(lastOpIndex + 1).trim();
-
+    if (indiceUltimoOperador !== -1) {
+        let izquierda = expresion.slice(0, indiceUltimoOperador).trim();  // Parte izquierda de la expresión
+        let derecha = expresion.slice(indiceUltimoOperador + 1).trim();  // Parte derecha de la expresión
+        
         return {
-            operator: lastOp,
-            left: parseExpression(left),
-            right: parseExpression(right)
+            operador: ultimoOperador,  // El operador encontrado
+            izquierda: analizarExpresion(izquierda),  // Recursividad para la parte izquierda
+            derecha: analizarExpresion(derecha)  // Recursividad para la parte derecha
         };
     } else {
-        return expression.trim();
+        return expresion.trim();  // Si no hay más operadores, retornar la expresión como está
     }
 }
 
-// Función para crear un nodo HTML
-function createNode(value) {
-    let node = document.createElement('div');
-    node.className = 'nodo';
-    node.textContent = value;
-    return node;
+// Función para crear un nodo visual en el árbol
+function crearNodo(valor) {
+    let nodo = document.createElement('div');  // Crear un elemento div
+    nodo.className = 'nodo';  // Asignar la clase 'nodo'
+    nodo.textContent = valor;  // Asignar el valor al nodo
+    return nodo;
 }
 
-// Función para construir el árbol visualmente en el contenedor
-function buildTree(node, container) {
-    if (typeof node === 'string') {
-        let leafNode = createNode(node);
-        container.appendChild(leafNode);
+// Función para construir el árbol visualmente
+function construirArbol(nodo, contenedor) {
+    if (typeof nodo === 'string') {  // Si el nodo es una hoja (número)
+        let nodoHoja = crearNodo(nodo);  // Crear el nodo de la hoja
+        contenedor.appendChild(nodoHoja);  // Añadirlo al contenedor
         return;
     }
 
-    let rootNode = createNode(node.operator);
-    container.appendChild(rootNode);
+    // Crear el nodo raíz (operador)
+    let nodoRaiz = crearNodo(nodo.operador);  
+    contenedor.appendChild(nodoRaiz);  // Añadir el nodo raíz al contenedor
 
-    let line = document.createElement('div');
-    line.className = 'linea';
-    container.appendChild(line);
+    // Crear la línea que conecta los nodos
+    let linea = document.createElement('div');
+    linea.className = 'linea';
+    contenedor.appendChild(linea);
 
-    let leftRightContainer = document.createElement('div');
-    leftRightContainer.style.display = 'flex';
-    leftRightContainer.style.justifyContent = 'space-between';
+    // Contenedor para los nodos hijos
+    let contenedorIzqDer = document.createElement('div');
+    contenedorIzqDer.style.display = 'flex';
+    contenedorIzqDer.style.justifyContent = 'space-between';
 
-    let leftContainer = document.createElement('div');
-    let rightContainer = document.createElement('div');
+    let contenedorIzquierda = document.createElement('div');
+    let contenedorDerecha = document.createElement('div');
 
-    leftContainer.className = 'child-container';
-    rightContainer.className = 'child-container';
+    contenedorIzquierda.className = 'contenedor-hijo';
+    contenedorDerecha.className = 'contenedor-hijo';
 
-    leftRightContainer.appendChild(leftContainer);
-    leftRightContainer.appendChild(rightContainer);
+    contenedorIzqDer.appendChild(contenedorIzquierda);
+    contenedorIzqDer.appendChild(contenedorDerecha);
 
-    container.appendChild(leftRightContainer);
+    contenedor.appendChild(contenedorIzqDer);
 
-    buildTree(node.left, leftContainer);
-    buildTree(node.right, rightContainer);
+    // Construir recursivamente los subárboles izquierdo y derecho
+    construirArbol(nodo.izquierda, contenedorIzquierda);
+    construirArbol(nodo.derecha, contenedorDerecha);
 }
 
-// Evento para generar el árbol cuando se presiona el botón
-document.getElementById('generate-btn').addEventListener('click', () => {
-    let expression = document.getElementById('expresion').value.trim();
-    const treeContainer = document.getElementById('tree-container');
-    const contenedorResultado = document.getElementById('resultado');
-    treeContainer.innerHTML = ''; // Limpiar el árbol anterior
-    contenedorResultado.innerHTML = ''; // Limpiar el resultado anterior
-
-    // Validar la expresión ingresada
-    const expresionValida = /^\s*[\d+\-*/().\s]+\s*$/;
-    if (!expresionValida.test(expression)) {
-        treeContainer.innerHTML = "<div class='error'>Expresión no válida. Verifique los datos ingresados.<br>Usa números, paréntesis y operadores (+, -, *, /).</div>";
-        return;
-    }
-
-    let parsedExpression = parseExpression(expression);
-    buildTree(parsedExpression, treeContainer);
-
-    // Evaluar la expresión usando eval() y mostrar el resultado
-    try {
-        const resultado = eval(expression);
-        contenedorResultado.innerHTML = `<div class='resultado'>Resultado: ${resultado}</div>`;
-    } catch (error) {
-        contenedorResultado.innerHTML = "<div class='error'>Error al evaluar la expresión.</div>";
-    }
+// Evento al hacer clic en el botón para generar el árbol
+document.getElementById('boton-generar').addEventListener('click', () => {
+    let expresion = document.getElementById('entrada-expresion').value;  // Obtener la expresión del campo de texto
+    let expresionAnalizada = analizarExpresion(expresion);  // Analizar la expresión
+    let contenedorArbol = document.getElementById('contenedor-arbol');  
+    contenedorArbol.innerHTML = '';  // Limpiar el árbol anterior
+    construirArbol(expresionAnalizada, contenedorArbol);  // Construir el nuevo árbol
 });
-
-// Función para limpiar el árbol y la entrada
-function limpiarArbol() {
-    document.getElementById("expresion").value = "";
-    document.getElementById("tree-container").innerHTML = "";
-    document.getElementById("resultado").innerHTML = "";
-}
