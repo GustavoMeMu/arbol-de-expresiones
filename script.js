@@ -84,11 +84,56 @@ function construirArbol(nodo, contenedor) {
     construirArbol(nodo.derecha, contenedorDerecha);
 }
 
-// Evento al hacer clic en el botón para generar el árbol
+// Función para el recorrido preorden
+function recorridoPreorden(nodo) {
+    if (typeof nodo === 'string') {
+        return nodo;
+    }
+    let resultado = nodo.operador;
+    resultado += ' ' + recorridoPreorden(nodo.izquierda);
+    resultado += ' ' + recorridoPreorden(nodo.derecha);
+    return resultado;
+}
+
+// Función para el recorrido inorden
+function recorridoInorden(nodo) {
+    if (typeof nodo === 'string') {
+        return nodo;
+    }
+    let resultado = recorridoInorden(nodo.izquierda);
+    resultado += ' ' + nodo.operador;
+    resultado += ' ' + recorridoInorden(nodo.derecha);
+    return resultado;
+}
+
+// Función para el recorrido postorden
+function recorridoPostorden(nodo) {
+    if (typeof nodo === 'string') {
+        return nodo;
+    }
+    let resultado = recorridoPostorden(nodo.izquierda);
+    resultado += ' ' + recorridoPostorden(nodo.derecha);
+    resultado += ' ' + nodo.operador;
+    return resultado;
+}
+
+// Evento al hacer clic en el botón para generar el árbol y mostrar recorridos
 document.getElementById('boton-generar').addEventListener('click', () => {
     let expresion = document.getElementById('entrada-expresion').value;  // Obtener la expresión del campo de texto
     let expresionAnalizada = analizarExpresion(expresion);  // Analizar la expresión
     let contenedorArbol = document.getElementById('contenedor-arbol');  
     contenedorArbol.innerHTML = '';  // Limpiar el árbol anterior
     construirArbol(expresionAnalizada, contenedorArbol);  // Construir el nuevo árbol
+
+    // Generar los recorridos
+    let preorden = recorridoPreorden(expresionAnalizada);
+    let inorden = recorridoInorden(expresionAnalizada);
+    let postorden = recorridoPostorden(expresionAnalizada);
+
+    // Mostrar los resultados en el div #resultado
+    document.getElementById('resultado').innerHTML = `
+        <p><strong>Preorden:</strong> ${preorden}</p>
+        <p><strong>Inorden:</strong> ${inorden}</p>
+        <p><strong>Postorden:</strong> ${postorden}</p>
+    `;
 });
